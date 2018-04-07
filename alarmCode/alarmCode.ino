@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 int redPin=9;  //set red LED pin to 11
 int greenPin=7; //set green LED pin to 10
 int bluePin=8; //set blue LED pin to 6
@@ -21,9 +23,37 @@ randomSeed(analogRead(A1));
 pinMode(redPin, OUTPUT); //Set redPin to be an output
 pinMode(greenPin, OUTPUT); //Set greenPin to be an output
 pinMode(bluePin, OUTPUT); //set bluePin to be an output
+>>>>>>> d44e4fac34d51880b773a47c47cbe47faeb08f3f
 
+#include <Time.h>
+#include <TimeLib.h>
+
+
+int screaming = 0;
+
+void setup()
+{
+  pinMode(1, OUTPUT);
+  Serial.begin(115200); 
 }
 
+<<<<<<< HEAD
+void loop()
+{
+  if (screaming){
+    tones(1000);
+  }
+  Serial.println(sin(millis()*PI/1000)/2 + 0.5);
+}
+
+void tones(int delay){
+  analogWrite(1, 2000);
+  delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
+  analogWrite(1, 0);
+  delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
+}
+
+=======
 void loop() {
   // put your main code here, to run repeatedly:
   if(count == 0){
@@ -123,3 +153,4 @@ for (int i=0; i < sequence_len; i++){
   delay(2000);
 }
   }
+>>>>>>> d44e4fac34d51880b773a47c47cbe47faeb08f3f
