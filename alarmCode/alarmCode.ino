@@ -5,18 +5,21 @@ int greenPin=7; //set green LED pin to 10
 int bluePin=8; //set blue LED pin to 6
 
 int brightness=100;
-const int sequence_len = 5;
+const int sequence_len = 6;
 int sequence[sequence_len];
 bool is_done = false;
 int red_light = 0;
 int blue_light = 0;
 int green_light = 0;
 int count = 0;
+
+int previous = 0;
   
 
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600); //Turn on Serial port
+randomSeed(analogRead(A1));
 pinMode(redPin, OUTPUT); //Set redPin to be an output
 pinMode(greenPin, OUTPUT); //Set greenPin to be an output
 pinMode(bluePin, OUTPUT); //set bluePin to be an output
@@ -57,7 +60,7 @@ void loop() {
     generateSequence();
   }
 
-  if(count < 5) {
+  if(count < sequence_len) {
     switch (sequence[count]) {
       case 1:
         red_light = brightness;
@@ -98,7 +101,26 @@ void loop() {
 }
 void generateSequence() {
   for(int i =0; i<sequence_len;i++) {
-      sequence[i] = random(1, 5);
+      int r = random(1, 5);
+        
+      if(previous != r) {
+        sequence[i] = r;
+        previous = r;
+      }else {
+        if(r == 1) {
+           r = r + 1;
+           sequence[i] = r;
+           previous = r;
+        } else {
+           r = r -1;
+           sequence[i] = r;
+           previous = r;
+          }
+        }
+        
+    }
+    for(int i = 0; i<sequence_len;i++ ){
+      Serial.print(sequence[i]);
     }
   }
 
