@@ -62,7 +62,7 @@
 #include "nrf_log_default_backends.h"
 
 #include <Time.h>
-#include <TimeLib.h>
+//#include <TimeLib.h>
 
 #define BTN_ID_SLEEP                0 /**< ID of button used to put the application into sleep mode. */
 
@@ -112,6 +112,37 @@ static void log_init(void)
     NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
 
+float power(float base, int exp) {
+    if(exp < 0) {
+        if(base == 0)
+            return -0; // Error!!
+        return 1 / (base * power(base, (-exp) - 1));
+    }
+    if(exp == 0)
+        return 1;
+    if(exp == 1)
+        return base;
+    return base * power(base, exp - 1);
+}
+
+int fact(int n) {
+    return n <= 0 ? 1 : n * fact(n-1);
+}
+
+float sine(int deg) {
+    deg %= 360; // make it less than 360
+    float rad = deg * 3.14159 / 180;
+    float sin = 0;
+
+    int i;
+    for(i = 0; i < 10; i++) { // That's Taylor series!!
+        sin += power(-1, i) * power(rad, 2 * i + 1) / fact(2 * i + 1);
+    }
+    return sin;
+}
+
+
+
 
 /**
  * @brief 500 miliseconds tick handler for changing the LED state.
@@ -127,9 +158,10 @@ static void app_tick_handler(void * p_context)
 static void utils_setup(void)
 {
 
-    pinMode(1, OUTPUT);
+    //pinMode(1, OUTPUT);
 
     ret_code_t err_code;
+	  nrf_gpio_cfg_output(12);
 
     log_init();
 
@@ -157,10 +189,17 @@ static void utils_setup(void)
 }
 
 void tones(){
-  analogWrite(1, 2000);
-  delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
-  analogWrite(1, 0);
-  delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
+	nrf_gpio_pin_set(12);
+	//nrf_gpio_pin_write(12, 1);
+  //hal_wakeup_reason_t(1);
+	nrf_delay_us(sine(millis()*PI/1000)/2 + 0.5);
+	nrf_gpio_pin_clear(12);
+	nrf_delay_us(sine(millis()*PI/1000)/2 + 0.5);
+	//nrf_gpio_pin_write(12, 0);
+  //analogWrite(1, 2000);
+  //delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
+  //analogWrite(1, 0);
+  //delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
 }
 
 
@@ -178,10 +217,9 @@ int main(void)
     {
 
         if (screaming){
-            tones();
+					bsp_board_led_on(BSP_BOARD_LED_3);			
+          tones();
         }
-
-
         NRF_LOG_FLUSH();
 
         if (m_system_off_mode_on)
@@ -189,7 +227,8 @@ int main(void)
             nrf_delay_ms(100);
             // Enter System OFF mode.
             NRF_POWER->SYSTEMOFF = 1;
-        }
+					  screaming = false;
+        }			
     }
 }
 
