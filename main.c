@@ -72,6 +72,8 @@ APP_TIMER_DEF(m_tick_timer);             /**< Timer used to toggle LED state. */
 
 static volatile bool m_system_off_mode_on = false; /**< Indicates if the application should go into System OFF mode. */
 static bool screaming = true;
+static uint32_t t = 0;
+static float pi = 3.14159265359;
 
 /**@brief Function for handling events from the BSP module.
  *
@@ -131,7 +133,7 @@ int fact(int n) {
 
 float sine(int deg) {
     deg %= 360; // make it less than 360
-    float rad = deg * 3.14159 / 180;
+    float rad = deg * pi / 180;
     float sin = 0;
 
     int i;
@@ -189,12 +191,13 @@ static void utils_setup(void)
 }
 
 void tones(){
+	t++;
 	nrf_gpio_pin_set(12);
 	//nrf_gpio_pin_write(12, 1);
   //hal_wakeup_reason_t(1);
-	nrf_delay_us(sine(millis()*PI/1000)/2 + 0.5);
+	nrf_delay_us(500*sine(t/5) + 1000);
 	nrf_gpio_pin_clear(12);
-	nrf_delay_us(sine(millis()*PI/1000)/2 + 0.5);
+	nrf_delay_us(500*sine(t/5) + 1000);
 	//nrf_gpio_pin_write(12, 0);
   //analogWrite(1, 2000);
   //delayMicroseconds(sin(millis()*PI/1000)/2 + 0.5);
